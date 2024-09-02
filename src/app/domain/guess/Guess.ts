@@ -1,18 +1,42 @@
-import { JsonController, Get, Post, Body, Param } from "routing-controllers";
+import { JsonController, Post, Body } from "routing-controllers";
 
 import { IGuess } from "./Guess.types";
 
 import { ApiResponse } from "helpers/ApiResponse";
 import { ApiError } from "helpers/ApiError";
 
-const storeData: IGuess[] = [];
+const storeDataGuess: IGuess[] = [];
+const startingNumber: number = 55;
 
 @JsonController("/guess")
 export default class Guess {
   @Post()
   async setGuessNumber(@Body() body: IGuess) {
-    storeData.push(body);
+    if (!body) {
+      throw new ApiError(500, {
+        code: "HTTP Error Internal Server Error",
+        message: `Server errors`,
+      });
+    }
 
-    return new ApiResponse(true, "Guess number successfully created");
+    const newDataGuess = {
+      guessNumber: body.guessNumber,
+    };
+
+    storeDataGuess.push(newDataGuess);
+
+    if (storeDataGuess.length > 0) {
+      return storeDataGuess.map(({ guessNumber }) => {
+        if (guessNumber < startingNumber) {
+          return new ApiResponse(true, "Number needed more");
+        }
+        if (guessNumber > startingNumber) {
+          return new ApiResponse(true, "Number needed less");
+        }
+        if (guessNumber === startingNumber) {
+          return new ApiResponse(true, "You Winner!");
+        }
+      });
+    }
   }
 }

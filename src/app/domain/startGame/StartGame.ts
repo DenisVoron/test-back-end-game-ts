@@ -23,8 +23,6 @@ export default class StartGame {
 
     storeData.push(userData);
 
-    console.log(storeData);
-
     return new ApiResponse(true, "Number successfully created");
   }
 }

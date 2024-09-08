@@ -10,19 +10,19 @@ const storeData: IStartGame[] = [];
 export default class StartGame {
   @Post()
   async setRandomNumber() {
-    const randomNumber = Math.ceil(Math.random() * (10 - 1) + 1);
+    try {
+      const randomNumber = Math.ceil(Math.random() * (10 - 1) + 1);
 
-    if (!randomNumber) {
+      const userData: IStartGame = { startNumber: randomNumber };
+
+      storeData.push(userData);
+
+      return new ApiResponse(true, "Number successfully created");
+    } catch (error) {
       throw new ApiError(500, {
         code: "HTTP Error Internal Server Error",
         message: `Server errors`,
       });
     }
-
-    const userData: IStartGame = { startNumber: randomNumber };
-
-    storeData.push(userData);
-
-    return new ApiResponse(true, "Number successfully created");
   }
 }
